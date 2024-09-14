@@ -21,4 +21,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "MoviesApp"
 include(":app")
- 
+include(":domain")
