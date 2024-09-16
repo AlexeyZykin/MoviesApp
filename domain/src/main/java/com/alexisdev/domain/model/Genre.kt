@@ -13,4 +13,5 @@ enum class Genre {
     THRILLER,
     HORROR,
     SCI_FI,
+    UNDEFINED
 }

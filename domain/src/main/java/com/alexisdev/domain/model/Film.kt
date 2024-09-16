@@ -8,5 +8,5 @@ data class Film(
     val rating: Double,
     val imageUrl: String,
     val description: String,
-    val genres: List<String>
+    val genres: List<Genre>
 )
