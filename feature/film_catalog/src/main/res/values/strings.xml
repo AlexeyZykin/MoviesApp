@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="genre_biography_title">Биография</string>
+    <string name="genre_action_title">Боевик</string>
+    <string name="genre_detective_title">Детектив</string>
+    <string name="genre_drama_title">Драма</string>
+    <string name="genre_comedy_title">Комедия</string>
+    <string name="genre_crime_title">Криминал</string>
+    <string name="genre_romance_title">Мелодрама</string>
+    <string name="genre_musical_title">Мюзикл</string>
+    <string name="genre_adventure_title">Приключения</string>
+    <string name="genre_thriller_title">Триллер</string>
+    <string name="genre_horror_title">Ужасы</string>
+    <string name="genre_sci_fi_title">Фантастика</string>
+    <string name="genre_fantasy_title">Фэнтэзи</string>
+    <string name="film_catalog_genres_header">Жанры</string>
+    <string name="film_catalog_films_header">Фильмы</string>
+</resources>
