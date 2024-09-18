@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.NavDirections
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -68,7 +69,8 @@ class FilmCatalogFragment : Fragment() {
         filmAdapter = FilmAdapter(
             object : FilmAdapter.ClickListener {
                 override fun onClick(filmId: Int) {
-                    viewModel.onEvent(FilmCatalogEvent.OnFilmClick(filmId))
+                    val action = FilmCatalogFragmentDirections.actionFilmCatalogFragmentToFilmDetailsNavGraph(filmId)
+                    viewModel.onEvent(FilmCatalogEvent.OnFilmClick(action))
                 }
             }
         )

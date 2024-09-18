@@ -11,6 +11,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMap
 import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
 
 internal class FilmNetworkDataSourceImpl(private val filmApiService: FilmApiService) :
@@ -18,6 +19,9 @@ internal class FilmNetworkDataSourceImpl(private val filmApiService: FilmApiServ
     private val state = MutableSharedFlow<GenreDto?>(extraBufferCapacity = 1, replay = 1)
     private val filmsFlow = state.flatMapLatest { filterGenre ->
         val films = filmApiService.getAllFilms().films
+            .sortedWith(
+                compareBy(String.CASE_INSENSITIVE_ORDER) { it.localizedName }
+            )
         val filteredFilms = if (filterGenre != null) {
             films.filter { film -> film.genres.contains(filterGenre) }
         } else {
@@ -43,22 +47,11 @@ internal class FilmNetworkDataSourceImpl(private val filmApiService: FilmApiServ
     override fun loadFilmsByGenre(genre: GenreDto) {
         state.tryEmit(genre)
     }
+
+    override fun getFilmDetails(id: Int): Flow<FilmDto> {
+        return filmsFlow.flatMapLatest { films ->
+            val filmDetails = films.first { it.id == id }
+            flowOf(filmDetails)
+        }
+    }
 }
-
-
-//    private val filmsFlow = MutableSharedFlow<Unit>(0)
-//    private val cachedFilms = filmsFlow.flatMapLatest {
-//        flowOf(filmApiService.getAllFilms().films)
-//    }
-//    private val genresFlow = cachedFilms.flatMapLatest { films ->
-//        val genres = films.flatMap { it.genres }.distinct()
-//        flowOf(genres)
-//    }
-//    private val filterState = MutableSharedFlow<GenreDto>(replay = 1)
-//    private val filteredFilms = filterState.flatMapLatest { filterGenre ->
-//        val filteredFilms = filmApiService.getAllFilms().films
-//            .filter { films ->
-//                films.genres.contains(filterGenre)
-//            }
-//        flowOf(filteredFilms)
-//    }

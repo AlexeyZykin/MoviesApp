@@ -8,6 +8,17 @@
     <fragment
         android:id="@+id/filmCatalogFragment"
         android:name="com.alexisdev.main.FilmCatalogFragment"
-        android:label="fragment_film_catalog"
-        tools:layout="@layout/fragment_film_catalog" />
+        android:label="@string/film_catalog_toolbar_title"
+        tools:layout="@layout/fragment_film_catalog" >
+        <action
+            android:id="@+id/action_filmCatalogFragment_to_film_details_nav_graph"
+            app:destination="@id/film_details_nav_graph" >
+
+            <argument
+                android:name="filmId"
+                app:argType="integer" />
+        </action>
+    </fragment>
+
+    <include app:graph="@navigation/film_details_nav_graph" />
 </navigation>

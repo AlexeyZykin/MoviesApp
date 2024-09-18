@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
+    <string name="film_catalog_toolbar_title">Фильмы</string>
     <string name="genre_biography_title">Биография</string>
     <string name="genre_action_title">Боевик</string>
     <string name="genre_detective_title">Детектив</string>

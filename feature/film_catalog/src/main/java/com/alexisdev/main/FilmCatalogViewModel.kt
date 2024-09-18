@@ -4,6 +4,9 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.viewModelFactory
+import androidx.navigation.NavDirections
+import com.alexisdev.common.navigation.NavEffect
+import com.alexisdev.common.navigation.NavigationManager
 import com.alexisdev.domain.usecase.api.GetAllFilmsUseCase
 import com.alexisdev.domain.usecase.api.GetAllGenresUseCase
 import com.alexisdev.domain.usecase.api.LoadAllFilmsUseCase
@@ -26,7 +29,8 @@ class FilmCatalogViewModel(
     private val getAllFilmsUseCase: GetAllFilmsUseCase,
     private val getAllGenresUseCase: GetAllGenresUseCase,
     private val loadAllFilmsUseCase: LoadAllFilmsUseCase,
-    private val loadFilmsByGenreUseCase: LoadFilmsByGenreUseCase
+    private val loadFilmsByGenreUseCase: LoadFilmsByGenreUseCase,
+    private val navManager: NavigationManager
 ) : ViewModel() {
     private val _uiState: MutableStateFlow<FilmCatalogState> = MutableStateFlow(FilmCatalogState.Loading)
     val uiState: StateFlow<FilmCatalogState> = _uiState
@@ -36,7 +40,7 @@ class FilmCatalogViewModel(
         loadAllFilmCatalogData()
     }
 
-    fun loadAllFilmCatalogData() {
+    private fun loadAllFilmCatalogData() {
         loadAllFilmsUseCase.execute()
     }
 
@@ -60,12 +64,11 @@ class FilmCatalogViewModel(
     fun onEvent(event: FilmCatalogEvent) {
         when (event) {
             is FilmCatalogEvent.OnSelectGenre -> { handleOnSelectGenre(event.genre) }
-            is FilmCatalogEvent.OnFilmClick -> {}
+            is FilmCatalogEvent.OnFilmClick -> { navManager.navigate(NavEffect.NavigateTo(event.navDirections)) }
         }
     }
 
     private fun handleOnSelectGenre(genreUi: GenreUi) {
-        Log.d("viewModel", "eventFilter")
         loadFilmsByGenreUseCase.execute(genreUi.toGenre())
         _uiState.update {
             (it as? FilmCatalogState.Content)?.copy(selectedGenre = genreUi) ?: it
@@ -85,5 +88,5 @@ sealed interface FilmCatalogState {
 
 sealed interface FilmCatalogEvent {
     data class OnSelectGenre(val genre: GenreUi) : FilmCatalogEvent
-    data class OnFilmClick(val filmId: Int) : FilmCatalogEvent
+    data class OnFilmClick(val navDirections: NavDirections) : FilmCatalogEvent
 }

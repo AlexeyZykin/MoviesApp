@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.jetbrains.kotlin.android)
+    alias(libs.plugins.navigation.safeargs)
 }
 
 android {
@@ -38,6 +39,8 @@ android {
 dependencies {
     implementation(project(":core:domain"))
     implementation(project(":core:designsystem"))
+    implementation(project(":core:common"))
+    implementation(project(":feature:film_details"))
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)

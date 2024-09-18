@@ -20,7 +20,7 @@ class FilmAdapter(private val clickListener: ClickListener) :
             Glide
                 .with(binding.root)
                 .load(film.imageUrl)
-                .placeholder(designsystem.drawable.film_placeholder)
+                .placeholder(designsystem.drawable.img_placeholder)
                 .centerCrop()
                 .into(binding.imgFilm)
             binding.root.setOnClickListener { clickListener.onClick(film.id) }

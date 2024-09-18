@@ -47,4 +47,4 @@ okhttp-logging-interceptor = { module = "com.squareup.okhttp3:logging-intercepto
 android-application = { id = "com.android.application", version.ref = "agp" }
 jetbrains-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 android-library = { id = "com.android.library", version.ref = "agp" }
-
+navigation-safeargs = { id = "androidx.navigation.safeargs", version.ref = "navigation" }

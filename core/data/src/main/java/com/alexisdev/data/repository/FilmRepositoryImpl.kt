@@ -34,7 +34,7 @@ class FilmRepositoryImpl(private val filmNetworkDataSource: FilmNetworkDataSourc
     }
 
     override fun getFilmDetails(id: Int): Flow<Film> {
-        TODO("Not yet implemented")
+        return filmNetworkDataSource.getFilmDetails(id).map { it.toFilm() }
     }
 
     override suspend fun getAllGenres(): Flow<List<Genre>> {

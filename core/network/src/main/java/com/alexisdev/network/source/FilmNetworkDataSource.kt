@@ -9,4 +9,5 @@ interface FilmNetworkDataSource {
     fun getFilms(): Flow<List<FilmDto>>
     suspend fun getGenres(): Flow<List<GenreDto>>
     fun loadFilmsByGenre(genre: GenreDto)
+    fun getFilmDetails(id: Int): Flow<FilmDto>
 }
