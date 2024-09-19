@@ -22,7 +22,6 @@ class FilmRepositoryImpl(private val filmNetworkDataSource: FilmNetworkDataSourc
     FilmRepository {
 
     override fun getAllFilms(): Flow<Response<List<Film>>> {
-
         val filmsFlow = filmNetworkDataSource.getFilms().map { response ->
             when (response) {
                 is Response.Loading -> Response.Loading

@@ -24,27 +24,21 @@ internal class FilmNetworkDataSourceImpl(private val filmApiService: FilmApiServ
     private val lastSelectedGenre = MutableStateFlow<GenreDto?>(null)
     private val filmsFlow = state.flatMapLatest { filterGenre ->
         flow<Response<List<FilmDto>>> {
-            try {
-                val films = filmApiService.getAllFilms().films
-                    .sortedWith(
-                        compareBy(String.CASE_INSENSITIVE_ORDER) { it.localizedName }
-                    )
-                val filteredFilms = if (filterGenre != null) {
-                    films.filter { film -> film.genres.contains(filterGenre) }
-                } else {
-                    films
-                }
-                emit(Response.Success(data = filteredFilms))
+
+            val films = filmApiService.getAllFilms().films
+                .sortedWith(
+                    compareBy(String.CASE_INSENSITIVE_ORDER) { it.localizedName }
+                )
+            val filteredFilms = if (filterGenre != null) {
+                films.filter { film -> film.genres.contains(filterGenre) }
+            } else {
+                films
             }
-            catch (e: Exception) {
-                Log.e("Error", e.message ?: "Unknown error")
-                emit(Response.Error(e.message ?: "Error"))
-            }
-//                .catch {
-//                    Log.e("Error", it.message ?: "Unknown error")
-//                    emit(Response.Error(it.message ?: "Error"))
-//                }
+            emit(Response.Success(data = filteredFilms))
         }
+            .catch {
+                emit(Response.Error(it.message ?: "Error"))
+            }
     }
 
     override fun getFilms(): Flow<Response<List<FilmDto>>> {
@@ -62,8 +56,7 @@ internal class FilmNetworkDataSourceImpl(private val filmApiService: FilmApiServ
 
     override fun loadFilmsByGenre(genre: GenreDto?) {
         lastSelectedGenre.tryEmit(genre)
-        val emit = state.tryEmit(genre)
-        Log.d("network", emit.toString())
+        state.tryEmit(genre)
     }
 
     override fun getFilmDetails(id: Int): Flow<Response<FilmDto>> {

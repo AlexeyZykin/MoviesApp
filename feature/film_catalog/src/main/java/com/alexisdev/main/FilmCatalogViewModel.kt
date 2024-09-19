@@ -98,14 +98,8 @@ class FilmCatalogViewModel(
     private fun handleOnSelectGenre(genreUi: GenreUi) {
         (_uiState.value as? FilmCatalogState.Content)?.let { content ->
             if (genreUi == content.selectedGenre) {
-                _uiState.update {
-                    (it as? FilmCatalogState.Content)?.copy(selectedGenre = null) ?: it
-                }
                 loadFilmsByGenreUseCase.execute(null)
             } else {
-                _uiState.update {
-                    (it as? FilmCatalogState.Content)?.copy(selectedGenre = genreUi) ?: it
-                }
                 loadFilmsByGenreUseCase.execute(genreUi.toGenre())
             }
         }
@@ -118,18 +112,6 @@ class FilmCatalogViewModel(
             }
         }.launchIn(viewModelScope)
     }
-}
-
-
-sealed interface FilmCatalogState {
-    data class Content(
-        val genres: List<GenreUi>,
-        val films: List<FilmUi>,
-        val selectedGenre: GenreUi? = null
-    ) : FilmCatalogState
-
-    data object Loading : FilmCatalogState
-    data class Error(val msg: String) : FilmCatalogState
 }
 
 sealed interface FilmCatalogEvent {

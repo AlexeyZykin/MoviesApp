@@ -60,14 +60,6 @@ class FilmDetailsViewModel(
     }
 }
 
-sealed interface FilmDetailsState {
-    data class Content(
-        val filmUi: FilmUi
-    ) : FilmDetailsState
-
-    data object Loading : FilmDetailsState
-    data class Error(val msg: String) : FilmDetailsState
-}
 
 sealed interface FilmDetailsEvent {
     data object OnRetry : FilmDetailsEvent

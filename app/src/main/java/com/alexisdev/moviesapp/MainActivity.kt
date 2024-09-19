@@ -24,8 +24,8 @@ import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
     private lateinit var navController: NavController
-    private val navManager: NavigationManager = getKoinInstance()
     private lateinit var appBarConfiguration: AppBarConfiguration
+    private val navManager: NavigationManager = getKoinInstance()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,18 +41,10 @@ class MainActivity : AppCompatActivity() {
         return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
     }
 
-
-
     private fun observeNavigation() {
         lifecycleScope.launch {
             navManager.navEffectFlow.collect { navEffect ->
                 when (navEffect) {
-                    is NavEffect.NavigateSingleTopTo -> {
-                        navController.navigate(
-                            directions = navEffect.navDirections,
-                            navOptions = null
-                        )
-                    }
                     is NavEffect.NavigateTo -> {
                         navController.navigate(
                             directions = navEffect.navDirections
