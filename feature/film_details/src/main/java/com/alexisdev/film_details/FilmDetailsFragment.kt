@@ -38,7 +38,6 @@ class FilmDetailsFragment : Fragment() {
                         is FilmDetailsState.Loading -> {
                             showProgress(true)
                         }
-
                         is FilmDetailsState.Error -> {
                             showErrorSnackbar(binding.root)
                         }
@@ -78,9 +77,10 @@ class FilmDetailsFragment : Fragment() {
     }
 
     private fun showErrorSnackbar(view: View) {
-        val snackbar = Snackbar.make(view, "Ошибка подключения сети", Snackbar.LENGTH_INDEFINITE)
-        snackbar.setAction("ПОВТОРИТЬ") {
-            viewModel
+        val snackbar = Snackbar.make(view,
+            getString(R.string.film_details_snackbar_title), Snackbar.LENGTH_INDEFINITE)
+        snackbar.setAction(getString(R.string.film_details_snackbar_action_title)) {
+
         }
         snackbar.show()
     }

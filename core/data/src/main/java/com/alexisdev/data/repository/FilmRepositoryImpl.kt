@@ -1,5 +1,6 @@
 package com.alexisdev.data.repository
 
+import com.alexisdev.common.Response
 import com.alexisdev.data.mapper.toFilm
 import com.alexisdev.data.mapper.toGenre
 import com.alexisdev.data.mapper.toGenreDto
@@ -18,9 +19,16 @@ import kotlinx.coroutines.flow.map
 class FilmRepositoryImpl(private val filmNetworkDataSource: FilmNetworkDataSource) :
     FilmRepository {
 
-    override fun getAllFilms(): Flow<List<Film>> {
-        val filmsFlow = filmNetworkDataSource.getFilms().map { films ->
-            films.map { it.toFilm() }
+    override fun getAllFilms(): Flow<Response<List<Film>>> {
+
+        val filmsFlow = filmNetworkDataSource.getFilms().map { response ->
+            when (response) {
+                is Response.Loading -> Response.Loading
+                is Response.Error -> Response.Error(response.message)
+                is Response.Success -> {
+                    Response.Success(response.data.map { it.toFilm() })
+                }
+            }
         }
         return filmsFlow
     }
@@ -33,13 +41,25 @@ class FilmRepositoryImpl(private val filmNetworkDataSource: FilmNetworkDataSourc
         filmNetworkDataSource.loadFilmsByGenre(genre.toGenreDto())
     }
 
-    override fun getFilmDetails(id: Int): Flow<Film> {
-        return filmNetworkDataSource.getFilmDetails(id).map { it.toFilm() }
+    override fun getFilmDetails(id: Int): Flow<Response<Film>> {
+        return filmNetworkDataSource.getFilmDetails(id)
+            .map { response ->
+                when (response) {
+                    is Response.Error -> Response.Error(response.message)
+                    is Response.Loading -> Response.Loading
+                    is Response.Success -> Response.Success(response.data.toFilm())
+                }
+            }
     }
 
-    override suspend fun getAllGenres(): Flow<List<Genre>> {
-        return filmNetworkDataSource.getGenres().map { genres ->
-            genres.map { it.toGenre() }
-        }
+    override suspend fun getAllGenres(): Flow<Response<List<Genre>>> {
+        return filmNetworkDataSource.getGenres()
+            .map { response ->
+                when (response) {
+                    is Response.Error -> Response.Error(response.message)
+                    is Response.Loading -> Response.Loading
+                    is Response.Success -> Response.Success(response.data.map { it.toGenre() })
+                }
+            }
     }
 }

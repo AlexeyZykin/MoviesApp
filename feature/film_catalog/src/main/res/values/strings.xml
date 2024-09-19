@@ -16,4 +16,6 @@
     <string name="genre_fantasy_title">Фэнтэзи</string>
     <string name="film_catalog_genres_header">Жанры</string>
     <string name="film_catalog_films_header">Фильмы</string>
+    <string name="film_catalog_snackbar_title">Ошибка подключения сети</string>
+    <string name="film_catalog_action_title">ПОВТОРИТЬ</string>
 </resources>

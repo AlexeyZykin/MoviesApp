@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.alexisdev.common.Response
 import com.alexisdev.domain.usecase.api.GetFilmDetailsUseCase
 import com.alexisdev.film_details.mapper.toFilmUi
 import com.alexisdev.film_details.model.FilmUi
@@ -27,9 +28,21 @@ class FilmDetailsViewModel(
         val filmId = savedStateHandle.get<Int>(ARG_FILM_ID)
             ?.also {
                 getFilmDetailsUseCase.execute(it)
-                    .onEach { film ->
-                        _uiState.update {
-                            FilmDetailsState.Content(filmUi = film.toFilmUi())
+                    .onEach { response ->
+                        when (response) {
+                            is Response.Loading -> {
+                                _uiState.update { FilmDetailsState.Loading }
+                            }
+                            is Response.Error -> {
+                                _uiState.update {
+                                    FilmDetailsState.Error(response.message)
+                                }
+                            }
+                            is Response.Success -> {
+                                _uiState.update {
+                                    FilmDetailsState.Content(filmUi = response.data.toFilmUi())
+                                }
+                            }
                         }
                     }
                     .launchIn(viewModelScope)

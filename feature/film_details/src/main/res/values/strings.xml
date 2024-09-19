@@ -13,4 +13,6 @@
     <string name="genre_horror_title">ужасы</string>
     <string name="genre_sci_fi_title">фантастика</string>
     <string name="genre_fantasy_title">фэнтэзи</string>
+    <string name="film_details_snackbar_title">Ошибка подключения сети</string>
+    <string name="film_details_snackbar_action_title">ПОВТОРИТЬ</string>
 </resources>
