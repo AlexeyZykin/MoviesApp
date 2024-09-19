@@ -1,5 +1,5 @@
 package com.alexisdev.domain.usecase.api
 
-interface LoadAllFilmsUseCase {
+interface RefreshUseCase {
     fun execute()
 }

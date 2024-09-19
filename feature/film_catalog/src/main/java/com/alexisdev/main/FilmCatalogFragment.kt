@@ -1,7 +1,6 @@
 package com.alexisdev.main
 
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -9,7 +8,6 @@ import android.view.ViewGroup
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import androidx.navigation.NavDirections
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -18,11 +16,11 @@ import com.alexisdev.main.adapter.GenreAdapter
 import com.alexisdev.main.databinding.FragmentFilmCatalogBinding
 import com.alexisdev.main.model.FilmUi
 import com.alexisdev.main.model.GenreUi
+import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class FilmCatalogFragment : Fragment() {
-    //private var binding: FragmentFilmCatalogBinding? = null
     private lateinit var binding: FragmentFilmCatalogBinding
     private lateinit var genreAdapter: GenreAdapter
     private lateinit var filmAdapter: FilmAdapter
@@ -32,8 +30,7 @@ class FilmCatalogFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val binding = FragmentFilmCatalogBinding.inflate(inflater, container, false)
-        this.binding = binding
+        binding = FragmentFilmCatalogBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -44,13 +41,18 @@ class FilmCatalogFragment : Fragment() {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.uiState.collect { state ->
                     when (state) {
-                        is FilmCatalogState.Loading -> {
-                            binding.progressBar.visibility = View.VISIBLE
-                        }
-                        is FilmCatalogState.Error -> {  }
+                        is FilmCatalogState.Loading -> { showProgress(true) }
+
+                        is FilmCatalogState.Error -> { showErrorSnackbar(binding.root) }
+
                         is FilmCatalogState.Content -> {
+                            showProgress(false)
                             binding.progressBar.visibility = View.GONE
-                            showContent(genres = state.genres, films = state.films)
+                            renderContent(
+                                genres = state.genres,
+                                films = state.films,
+                                selectedGenre = state.selectedGenre
+                            )
                         }
                     }
                 }
@@ -69,7 +71,10 @@ class FilmCatalogFragment : Fragment() {
         filmAdapter = FilmAdapter(
             object : FilmAdapter.ClickListener {
                 override fun onClick(filmId: Int) {
-                    val action = FilmCatalogFragmentDirections.actionFilmCatalogFragmentToFilmDetailsNavGraph(filmId)
+                    val action =
+                        FilmCatalogFragmentDirections.actionFilmCatalogFragmentToFilmDetailsNavGraph(
+                            filmId
+                        )
                     viewModel.onEvent(FilmCatalogEvent.OnFilmClick(action))
                 }
             }
@@ -80,18 +85,32 @@ class FilmCatalogFragment : Fragment() {
         binding.rvFilms.adapter = filmAdapter
     }
 
-    private fun showContent(
+    private fun renderContent(
         genres: List<GenreUi>,
-        films: List<FilmUi>
+        films: List<FilmUi>,
+        selectedGenre: GenreUi?
     ) {
         binding.tvGenres.visibility = View.VISIBLE
         binding.tvFilms.visibility = View.VISIBLE
         genreAdapter.map(genres)
         filmAdapter.map(films)
+        genreAdapter.updateSelectedGenre(selectedGenre)
     }
 
-//    override fun onDestroyView() {
-//        super.onDestroyView()
-//        binding = null
-//    }
+    private fun showProgress(isShow: Boolean) {
+        if (isShow) binding.progressBar.visibility = View.VISIBLE
+        else binding.progressBar.visibility = View.GONE
+    }
+
+    private fun showErrorSnackbar(view: View) {
+        val snackbar = Snackbar.make(
+            view,
+            getString(R.string.film_catalog_snackbar_title), Snackbar.LENGTH_INDEFINITE
+        )
+        snackbar.setActionTextColor(requireContext().getColor(com.alexisdev.designsystem.R.color.yellow))
+        snackbar.setAction(getString(R.string.film_catalog_action_title)) {
+            viewModel.onEvent(FilmCatalogEvent.OnRetry)
+        }
+        snackbar.show()
+    }
 }

@@ -79,8 +79,9 @@ class FilmDetailsFragment : Fragment() {
     private fun showErrorSnackbar(view: View) {
         val snackbar = Snackbar.make(view,
             getString(R.string.film_details_snackbar_title), Snackbar.LENGTH_INDEFINITE)
+        snackbar.setActionTextColor(requireContext().getColor(designsystem.color.yellow))
         snackbar.setAction(getString(R.string.film_details_snackbar_action_title)) {
-
+            viewModel.onEvent(FilmDetailsEvent.OnRetry)
         }
         snackbar.show()
     }

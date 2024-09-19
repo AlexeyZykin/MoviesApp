@@ -6,7 +6,7 @@ import com.alexisdev.domain.usecase.api.LoadFilmsByGenreUseCase
 
 internal class LoadFilmsByGenreUseCaseImpl(private val filmRepository: FilmRepository) :
     LoadFilmsByGenreUseCase {
-    override fun execute(genre: Genre) {
+    override fun execute(genre: Genre?) {
         filmRepository.loadFilmsByGenre(genre)
     }
 }

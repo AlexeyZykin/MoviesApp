@@ -12,13 +12,17 @@ import com.alexisdev.main.model.GenreUi
 class GenreAdapter(private val clickListener: ClickListener) :
     RecyclerView.Adapter<GenreAdapter.GenreViewHolder>(), Mapper<List<GenreUi>> {
     private val list = mutableListOf<GenreUi>()
+    private var selectedGenre: GenreUi? = null
 
     class GenreViewHolder(private val binding: GenreCardItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
-        fun bind(genre: GenreUi, clickListener: ClickListener) {
+        fun bind(genre: GenreUi, isSelected: Boolean, clickListener: ClickListener) {
             val context = binding.root.context
+            binding.root.setBackgroundColor(
+                if (isSelected) context.getColor(designsystem.color.yellow)
+                else context.getColor(designsystem.color.transparent)
+            )
             binding.tvGenre.text = context.getString(genre.title)
-            binding.root.setOnClickListener { clickListener.onClick(genre) }
         }
     }
 
@@ -35,7 +39,16 @@ class GenreAdapter(private val clickListener: ClickListener) :
     override fun getItemCount() = list.size
 
     override fun onBindViewHolder(holder: GenreViewHolder, position: Int) {
-        holder.bind(list[position], clickListener)
+        holder.bind(list[position], list[position] == selectedGenre, clickListener)
+        holder.itemView.setOnClickListener {
+            clickListener.onClick(list[position])
+            updateSelectedGenre(list[position])
+        }
+    }
+
+    fun updateSelectedGenre(genre: GenreUi?) {
+        selectedGenre = genre
+        notifyDataSetChanged()
     }
 
     override fun map(source: List<GenreUi>) {

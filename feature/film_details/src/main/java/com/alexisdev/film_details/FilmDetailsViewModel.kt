@@ -1,11 +1,11 @@
 package com.alexisdev.film_details
 
-import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.alexisdev.common.Response
 import com.alexisdev.domain.usecase.api.GetFilmDetailsUseCase
+import com.alexisdev.domain.usecase.api.RefreshUseCase
 import com.alexisdev.film_details.mapper.toFilmUi
 import com.alexisdev.film_details.model.FilmUi
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -25,6 +25,10 @@ class FilmDetailsViewModel(
     val uiState: StateFlow<FilmDetailsState> = _uiState
 
     init {
+        getFilmDetails()
+    }
+
+    private fun getFilmDetails() {
         val filmId = savedStateHandle.get<Int>(ARG_FILM_ID)
             ?.also {
                 getFilmDetailsUseCase.execute(it)
@@ -48,6 +52,12 @@ class FilmDetailsViewModel(
                     .launchIn(viewModelScope)
             }
     }
+
+    fun onEvent(event: FilmDetailsEvent) {
+        when (event) {
+            is FilmDetailsEvent.OnRetry -> { getFilmDetails() }
+        }
+    }
 }
 
 sealed interface FilmDetailsState {
@@ -57,4 +67,8 @@ sealed interface FilmDetailsState {
 
     data object Loading : FilmDetailsState
     data class Error(val msg: String) : FilmDetailsState
+}
+
+sealed interface FilmDetailsEvent {
+    data object OnRetry : FilmDetailsEvent
 }

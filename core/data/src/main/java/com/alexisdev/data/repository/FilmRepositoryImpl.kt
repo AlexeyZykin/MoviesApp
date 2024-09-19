@@ -10,11 +10,13 @@ import com.alexisdev.network.source.FilmNetworkDataSource
 import com.alexisdev.domain.model.Film
 import com.alexisdev.domain.model.Genre
 import com.alexisdev.domain.repository.FilmRepository
+import com.alexisdev.network.model.GenreDto
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.mapNotNull
 
 class FilmRepositoryImpl(private val filmNetworkDataSource: FilmNetworkDataSource) :
     FilmRepository {
@@ -33,12 +35,10 @@ class FilmRepositoryImpl(private val filmNetworkDataSource: FilmNetworkDataSourc
         return filmsFlow
     }
 
-    override fun loadAllFilms() {
-        filmNetworkDataSource.fetchFilms()
-    }
-
-    override fun loadFilmsByGenre(genre: Genre) {
-        filmNetworkDataSource.loadFilmsByGenre(genre.toGenreDto())
+    override fun loadFilmsByGenre(genre: Genre?) {
+        filmNetworkDataSource.loadFilmsByGenre(
+            genre?.toGenreDto()
+        )
     }
 
     override fun getFilmDetails(id: Int): Flow<Response<Film>> {
@@ -61,5 +61,13 @@ class FilmRepositoryImpl(private val filmNetworkDataSource: FilmNetworkDataSourc
                     is Response.Success -> Response.Success(response.data.map { it.toGenre() })
                 }
             }
+    }
+
+    override fun getSelectedGenre(): Flow<Genre?> {
+        return filmNetworkDataSource.getSelectedGenre().map { it?.toGenre() }
+    }
+
+    override fun refresh() {
+        filmNetworkDataSource.refresh()
     }
 }
